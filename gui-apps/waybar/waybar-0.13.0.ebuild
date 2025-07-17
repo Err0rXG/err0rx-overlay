@@ -78,6 +78,7 @@ DEPEND="${RDEPEND}
 
 src_configure() {
 	local emesonargs=(
+		-Dniri=false
 		$(meson_feature libcxx)
 		$(meson_feature man man-pages)
 		$(meson_feature evdev libevdev)
