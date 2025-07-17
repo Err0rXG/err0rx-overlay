@@ -1,5 +1,5 @@
 ---
-# 🎮 Err0rX Gaming Overlay
+# 🎮 Err0rX Overlay
 
 Welcome to **Err0rX Gaming Overlay**! This personal Gentoo ebuild repository is your go-to for an optimized Linux gaming experience.
 
