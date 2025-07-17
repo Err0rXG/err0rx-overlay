@@ -79,7 +79,7 @@ DEPEND="${RDEPEND}
 src_configure() {
 	local emesonargs=(
 		-Dniri=false
-		$(meson_feature libcxx)
+		$(meson_use libcxx)
 		$(meson_feature man man-pages)
 		$(meson_feature evdev libevdev)
 		$(meson_feature jack)
