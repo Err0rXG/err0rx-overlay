@@ -18,19 +18,6 @@ Welcome! This is a personal Gentoo ebuild overlay focused on gaming. Here you’
 
     Version Control: Use Git for easy updates, rollback, and sharing across machines.
 
-🗂️ Repository Structure
-
-text
-<repo-root>/
-  ├── metadata/
-  │     └── layout.conf
-  ├── profiles/
-  │     └── repo_name
-  └── <category>/
-          └── <package>/
-                  └── <package-version>.ebuild
-
-Categories might include games-emulation/, games-action/, or others as suited for your packages.
 📚 How to Use This Overlay
 1️⃣ Add the Repository with eselect-repository (Recommended)
 
