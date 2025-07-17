@@ -1,75 +1,55 @@
-🎮 Custom Gentoo Gaming Ebuild Repository
+🎮 Err0rX Gaming Overlay
 
-Welcome! This is a personal Gentoo ebuild overlay focused on gaming. Here you’ll find:
+Welcome to Err0rX Gaming Overlay! This personal Gentoo ebuild repository is your go-to for an optimized Linux gaming experience.
 
-    🛠️ Updated or customized ebuilds for games, emulators, and related tools
+✨ What You'll Find:
 
-    🔄 Fixes for outdated/upstream-lagging ebuilds
+    Tailored Ebuilds: Updated and customized ebuilds for games, emulators, and essential gaming tools.
 
-    📝 Personal tweaks, patches, or enhancements for the best Linux gaming experience
+    Upstream Fixes: Solutions for outdated or unmaintained ebuilds from official repos.
 
-🚀 Purpose
+    Performance Tweaks: Personal patches and enhancements designed to boost your gaming performance on Gentoo.
 
-    Maintain Custom Ebuilds: Store and organize modified/upgraded ebuilds for games & gaming utilities.
+🚀 Purpose:
 
-    Stay Up-to-Date: Revive and renew abandoned or outdated ebuilds not available in official Gentoo repos.
+To centralize and maintain custom ebuilds, ensuring you always have access to the latest and greatest for gaming, with easy version control via Git.
 
-    Gaming Focus: Prioritize tools, engines, and software relevant to Linux gamers.
+📚 How to Use:
 
-    Version Control: Use Git for easy updates, rollback, and sharing across machines.
+1️⃣ Recommended (with eselect-repository):
 
-📚 How to Use This Overlay
-1️⃣ Add the Repository with eselect-repository (Recommended)
+Bash
 
-text
-sudo eselect repository add my-gaming-overlay git https://github.com/Err0rXG/err0rx-overlay.git
-sudo emaint sync -r my-gaming-overlay
+sudo eselect repository add err0rx-overlay git https://github.com/Err0rXG/err0rx-overlay.git
+sudo emaint sync -r err0rx-overlay
 
-    The overlay will be added and synced, ready for use!
-    📝 Note: Make sure eselect-repository is installed (emerge eselect-repository).
+(Make sure eselect-repository is installed)
 
-2️⃣ OR: Manual Method
+2️⃣ Manual Method:
 
-    Clone the overlay:
+Bash
 
-text
 git clone https://github.com/Err0rXG/err0rx-overlay.git /var/db/repos/err0rx-overlay
 
-Register the overlay by creating /etc/portage/repos.conf/err0rx-overlay.conf:
+Then, create /etc/portage/repos.conf/err0rx-overlay.conf:
 
-    text
-    [my-gaming-overlay]
-    location = /var/db/repos/err0rx-overlay
-    masters = gentoo
-    auto-sync = true
+[err0rx-overlay]
+location = /var/db/repos/err0rx-overlay
+masters = gentoo
+auto-sync = false
 
-🛠️ Typical Workflow
+🛠️ Workflow:
 
-    📝 Add or update ebuilds in the correct category/package directory.
+    Add/update ebuilds.
 
-    ⚡ Run repoman manifest inside each package dir after changes.
+    Run repoman manifest in the package directory.
 
-    💾 git add, git commit, and git push your changes to your remote repo for backup and cross-device sync.
+    git add, git commit, git push to sync your changes.
 
-    🕹️ Use Portage as usual (emerge <package>) – your gaming customizations will be found and managed like any other Gentoo package!
+    Use emerge <package> as usual!
 
-💡 Best Practices
+📜 License:
 
-    🏷️ Describe major changes in the README.md or commit messages.
+This overlay is licensed under GPL-2.0.
 
-    ❌ Keep your .gitignore up to date to skip build artifacts or temp files.
-
-    👾 Regularly test ebuilds to keep your overlay clean and functional.
-
-📜 License
-
-This repository is licensed under the GNU General Public License v2.0 (GPL-2.0), in the spirit of Gentoo and open source gaming.
-📖 Resources
-
-    Gentoo Custom Repository Guide
-
-    Gentoo Overlays for Gaming
-
-    Original Blog Tutorial (unixbhaskar)
-
-🎲 Happy gaming on Gentoo! Level up your Linux gaming setup, one ebuild at a time!
+🎲 Happy gaming on Gentoo! Level up your Linux gaming setup!
