@@ -34,7 +34,7 @@ DEPEND="~dev-util/vulkan-headers-${PV}
 BDEPEND="${PYTHON_DEPS}"
 
 PATCHES=(
-	"${FILESDIR}"/${PN}-1.4.313.0-magic_enum-0.9.7.patch
+	"${FILESDIR}"/${PN}-1.4.321.0-magic_enum-0.9.7.patch
 )
 
 src_configure() {
