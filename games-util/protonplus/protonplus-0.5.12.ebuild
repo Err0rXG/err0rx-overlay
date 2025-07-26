@@ -3,7 +3,7 @@
 
 EAPI=8
 
-inherit meson xdg
+inherit meson xdg gnome2-utils
 
 DESCRIPTION="A modern compatibility tools manager for gaming launchers"
 HOMEPAGE="https://github.com/Vysp3r/ProtonPlus"
@@ -13,13 +13,14 @@ if [[ ${PV} == *9999* ]] ; then
 	inherit git-r3
 else
 	SRC_URI="https://github.com/Vysp3r/ProtonPlus/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz"
+	S="${WORKDIR}/ProtonPlus-${PV}"
 	KEYWORDS="~amd64 ~x86"
 fi
 
 LICENSE="GPL-3"
 SLOT="0"
-IUSE="test"
-RESTRICT="!test? ( test )"
+
+IUSE="+protontricks"
 
 RDEPEND="
 	>=gui-libs/gtk-4.0:4
@@ -29,85 +30,99 @@ RDEPEND="
 	>=net-libs/libsoup-3.0:3.0
 	>=dev-libs/libgee-0.8:0.8
 	>=app-arch/libarchive-3.0:0=
+
+	protontricks? ( app-emulation/protontricks[gui] )
 "
-
 DEPEND="${RDEPEND}"
-
 BDEPEND="
-	>=dev-util/meson-1.0.0
-	dev-util/ninja
+	>=dev-build/meson-1.0.0
+	dev-build/ninja
 	dev-lang/vala:*
 	sys-devel/gettext
-	test? (
-		dev-util/desktop-file-utils
-		dev-libs/appstream-glib
-		dev-util/glib-utils
-	)
+
 "
 
 src_configure() {
 	local emesonargs=(
 		# Install to /opt instead of default locations
-		--bindir=/opt/${PN}
+		--bindir=/opt/${PN}/bin
 		--datadir=/opt/${PN}/share
-		$(meson_use test tests)
 	)
 	meson_src_configure
 }
 
 src_install() {
 	meson_src_install
-
+	
 	# Create wrapper script and symlink to /usr/bin for PATH access
 	cat > "${T}/${PN}" <<-EOF || die
 #!/bin/sh
-exec /opt/${PN}/protonplus "\$@"
+exec /opt/${PN}/bin/protonplus "\$@"
 EOF
-
 	dobin "${T}/${PN}"
-
-	# Adjust desktop file to point to correct binary location
-	if [[ -f "${ED}/opt/${PN}/share/applications/com.vysp3r.ProtonPlus.desktop" ]]; then
-		sed -i "s|Exec=protonplus|Exec=${PN}|" 			"${ED}/opt/${PN}/share/applications/com.vysp3r.ProtonPlus.desktop" || die
-
+	
+	# Handle desktop file
+	local desktop_file="${ED}/opt/${PN}/share/applications/com.vysp3r.ProtonPlus.desktop"
+	if [[ -f "${desktop_file}" ]]; then
+		sed -i "s|Exec=protonplus|Exec=${PN}|" "${desktop_file}" || die
 		# Install desktop file to system location for XDG integration
 		insinto /usr/share/applications
-		doins "${ED}/opt/${PN}/share/applications/com.vysp3r.ProtonPlus.desktop"
-
+		doins "${desktop_file}"
 		# Remove from /opt/share to avoid duplication
-		rm "${ED}/opt/${PN}/share/applications/com.vysp3r.ProtonPlus.desktop" || die
+		rm "${desktop_file}" || die
+		# Remove empty applications directory if it exists
+		[[ -d "${ED}/opt/${PN}/share/applications" ]] && rmdir "${ED}/opt/${PN}/share/applications" 2>/dev/null || true
 	fi
-
-	# Install icons to system location for XDG integration
-	if [[ -d "${ED}/opt/${PN}/share/icons" ]]; then
-		cp -r "${ED}/opt/${PN}/share/icons" "${ED}/usr/share/" || die
-		rm -rf "${ED}/opt/${PN}/share/icons" || die
+	
+	# Handle icons
+	local icons_dir="${ED}/opt/${PN}/share/icons"
+	if [[ -d "${icons_dir}" ]]; then
+		cp -r "${icons_dir}" "${ED}/usr/share/" || die
+		rm -rf "${icons_dir}" || die
 	fi
-
-	# Install metainfo to system location for XDG integration
-	if [[ -f "${ED}/opt/${PN}/share/metainfo/com.vysp3r.ProtonPlus.metainfo.xml" ]]; then
+	
+	# Handle metainfo
+	local metainfo_file="${ED}/opt/${PN}/share/metainfo/com.vysp3r.ProtonPlus.metainfo.xml"
+	if [[ -f "${metainfo_file}" ]]; then
 		insinto /usr/share/metainfo
-		doins "${ED}/opt/${PN}/share/metainfo/com.vysp3r.ProtonPlus.metainfo.xml"
-		rm "${ED}/opt/${PN}/share/metainfo/com.vysp3r.ProtonPlus.metainfo.xml" || die
+		doins "${metainfo_file}"
+		rm "${metainfo_file}" || die
+		# Remove empty metainfo directory if it exists
+		[[ -d "${ED}/opt/${PN}/share/metainfo" ]] && rmdir "${ED}/opt/${PN}/share/metainfo" 2>/dev/null || true
 	fi
-
-	# Install GSettings schema to system location
-	if [[ -f "${ED}/opt/${PN}/share/glib-2.0/schemas/com.vysp3r.ProtonPlus.gschema.xml" ]]; then
+	
+	# Handle GSettings schema
+	local gschema_file="${ED}/opt/${PN}/share/glib-2.0/schemas/com.vysp3r.ProtonPlus.gschema.xml"
+	if [[ -f "${gschema_file}" ]]; then
 		insinto /usr/share/glib-2.0/schemas
-		doins "${ED}/opt/${PN}/share/glib-2.0/schemas/com.vysp3r.ProtonPlus.gschema.xml"
-		rm "${ED}/opt/${PN}/share/glib-2.0/schemas/com.vysp3r.ProtonPlus.gschema.xml" || die
+		doins "${gschema_file}"
+		rm "${gschema_file}" || die
+		# Remove empty schema directories if they exist
+		[[ -d "${ED}/opt/${PN}/share/glib-2.0/schemas" ]] && rmdir "${ED}/opt/${PN}/share/glib-2.0/schemas" 2>/dev/null || true
+		[[ -d "${ED}/opt/${PN}/share/glib-2.0" ]] && rmdir "${ED}/opt/${PN}/share/glib-2.0" 2>/dev/null || true
 	fi
-
-	# Install localization files to system location
-	if [[ -d "${ED}/opt/${PN}/share/locale" ]]; then
-		cp -r "${ED}/opt/${PN}/share/locale" "${ED}/usr/share/" || die
-		rm -rf "${ED}/opt/${PN}/share/locale" || die
+	
+	# Look for additional schema files that might exist
+	if [[ -d "${ED}/opt/${PN}/share/glib-2.0/schemas" ]]; then
+		insinto /usr/share/glib-2.0/schemas
+		doins "${ED}"/opt/${PN}/share/glib-2.0/schemas/*.xml
+		rm -rf "${ED}/opt/${PN}/share/glib-2.0" || die
 	fi
+	
+	# Handle localization files
+	#local locale_dir="${ED}/opt/${PN}/share/locale"
+	#if [[ -d "${locale_dir}" ]]; then
+	#	cp -r "${locale_dir}" "${ED}/usr/share/" || die
+	#	rm -rf "${locale_dir}" || die
+	#fi
+	
+	# Clean up empty share directory if it exists
+	[[ -d "${ED}/opt/${PN}/share" ]] && rmdir "${ED}/opt/${PN}/share" 2>/dev/null || true
 }
 
 pkg_postinst() {
 	xdg_pkg_postinst
-
+	gnome2_schemas_update
 	elog ""
 	elog "ProtonPlus has been installed to /opt/${PN}"
 	elog "A wrapper script has been created at /usr/bin/${PN} for easy access"
@@ -119,6 +134,13 @@ pkg_postinst() {
 	elog "  - Bottles"
 	elog "  - WineZGUI"
 	elog ""
+
+	if ! use protontricks; then
+		elog "Optional: Install app-emulation/protontricks or enable the"
+		elog "'protontricks' USE flag to integrate with Protontricks for"
+		elog "advanced Proton prefix management and game tweaking."
+		elog ""
+	fi
 	elog "Make sure you have your gaming launchers properly configured"
 	elog "before using ProtonPlus to manage compatibility tools."
 	elog ""
@@ -126,4 +148,5 @@ pkg_postinst() {
 
 pkg_postrm() {
 	xdg_pkg_postrm
+	gnome2_schemas_update
 }
