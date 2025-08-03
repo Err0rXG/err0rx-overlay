@@ -41,7 +41,7 @@ RDEPEND="
 	dev-libs/re2:=
 	>=dev-libs/udis86-1.7.2
 	>=dev-libs/wayland-1.22.90
-	>=gui-libs/aquamarine-0.8.0:=
+	>=gui-libs/aquamarine-0.9.0:=
 	>=gui-libs/hyprcursor-0.1.9
 	>=gui-libs/hyprutils-0.7.0:=
 	media-libs/libglvnd
@@ -97,7 +97,7 @@ src_prepare() {
 
 src_configure() {
 	local emesonargs=(
-		$(meson_feature legacy-renderer legacy_renderer)
+		#$(meson_feature legacy-renderer legacy_renderer)
 		$(meson_feature systemd)
 		$(meson_feature X xwayland)
 	)
