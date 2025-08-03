@@ -48,10 +48,6 @@ BDEPEND="
 	virtual/pkgconfig
 "
 
-#PATCHES=(
-	#"${FILESDIR}/aquamarine-remove-wpedantic.patch"
-#)
-
 src_prepare() {
 	sed -i "/add_compile_options(-O3)/d" "${S}/CMakeLists.txt" || die
 	cmake_src_prepare

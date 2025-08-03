@@ -28,5 +28,5 @@ RDEPEND="${DEPEND}"
 
 PATCHES=(
 	# Merged upstream, not need in live
-	"${FILESDIR}/${PN}-fix-building-with-GCC16.patch"
+	#"${FILESDIR}/${PN}-fix-building-with-GCC16.patch"
 )
