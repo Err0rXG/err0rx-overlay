@@ -8,7 +8,7 @@ VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/hughsie.asc
 inherit meson python-single-r1 vala verify-sig udev xdg
 
 DESCRIPTION="Aims to make updating firmware on Linux automatic, safe and reliable"
-HOMEPAGE="https://fwupd.org"
+HOMEPAGE="https://fwupd.org https://github.com/fwupd/fwupd"
 SRC_URI="
 	https://github.com/${PN}/${PN}/releases/download/${PV}/${P}.tar.xz
 	verify-sig? ( https://github.com/${PN}/${PN}/releases/download/${PV}/${P}.tar.xz.asc )
