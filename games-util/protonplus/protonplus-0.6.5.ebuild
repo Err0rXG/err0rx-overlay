@@ -45,11 +45,6 @@ DEPEND="
 "
 RDEPEND="${DEPEND}"
 
-PATCHES=(
-	"${FILESDIR}/0.6.4-fix-clang-control-char.patch"
-	"${FILESDIR}/0.6.4-fix-ProtonPlusCpuFeatureProbe-redefinition.patch"
-)
-
 src_prepare() {
 	vala_setup
 	default
