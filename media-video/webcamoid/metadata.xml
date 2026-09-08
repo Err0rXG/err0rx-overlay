@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+
+<pkgmetadata>
+	<use>
+		<flag name="avdevice">
+			Enable FFmpeg libavdevice support
+		</flag>
+		<flag name="ffmpeg-screencap">
+			Enable desktop capture via FFmpeg
+		</flag>
+		<flag name="flatpak-vcam">
+			Enable virtual camera support when running under Flatpak
+		</flag>
+		<flag name="libusb">
+			Enable camera support via <pkg>dev-libs/libusb</pkg>
+		</flag>
+		<flag name="libuvc">
+			Enable camera support via <pkg>media-libs/libuvc</pkg>
+		</flag>
+		<flag name="pipewire">
+			Enable desktop capture via <pkg>media-video/pipewire</pkg>
+		</flag>
+		<flag name="pipewire-dynload">
+			Load PipeWire libraries at runtime instead of linking against them
+		</flag>
+		<flag name="pulseaudio-dynload">
+			Load PulseAudio libraries at runtime instead of linking against them
+		</flag>
+		<flag name="qtcamera">
+			Enable camera support via Qt Multimedia
+		</flag>
+		<flag name="qtscreencapture">
+			Enable desktop capture via Qt Multimedia
+		</flag>
+		<flag name="screencapture">
+			Enable desktop and screen capture support
+		</flag>
+		<flag name="veffects">
+			Enable video effects support
+		</flag>
+		<flag name="wlroots">
+			Enable desktop capture on wlroots-based Wayland compositors
+		</flag>
+	</use>
+	<upstream>
+		<remote-id type="github">webcamoid/webcamoid</remote-id>
+	</upstream>
+</pkgmetadata>
