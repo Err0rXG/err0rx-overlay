@@ -71,7 +71,10 @@ src_install() {
 	#create desktop file
 	make_desktop_entry "/usr/bin/zen %u" "Zen" zen "Network;WebBrowser" "$(cat "${FILESDIR}"/desktop_options)"
 	#handle permissions of destdir files
-	fperms 0755 "${destdir}"/{zen-bin,updater,glxtest,vaapitest}
+	#gfxtest replaced the old glxtest+vaapitest binaries as of 1.22b -
+	#it's the GPU/VA-API probe Zen shells out to at startup, doins strips
+	#its exec bit so it needs to be restored explicitly
+	fperms 0755 "${destdir}"/{zen-bin,updater,gfxtest}
 	fperms 0750 "${destdir}"/pingsender
 	# Disable auto-updates
 	insinto ${destdir}/distribution
