@@ -1,0 +1,475 @@
+# Copyright 2026 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+CRATES="
+	adler2@2.0.1
+	aho-corasick@1.1.5
+	allocator-api2@0.2.21
+	android_system_properties@0.1.6
+	anyhow@1.0.104
+	approx@0.5.1
+	arbitrary@1.4.2
+	async-trait@0.1.92
+	atomic-waker@1.1.2
+	atomic@0.6.1
+	autocfg@1.5.1
+	base64-simd@0.8.0
+	base64@0.22.1
+	base64@0.23.1
+	bit-set@0.5.3
+	bit-vec@0.6.3
+	bitflags@1.3.2
+	bitflags@2.13.1
+	bitvec@1.1.1
+	block-buffer@0.10.4
+	block-buffer@0.12.1
+	bumpalo@3.20.3
+	by_address@1.2.1
+	bytemuck@1.25.2
+	bytemuck_derive@1.12.0
+	byteorder-lite@0.1.0
+	bytes@1.12.1
+	castaway@0.2.4
+	cc@1.4.2
+	cfg-if@1.0.4
+	cfg_aliases@0.2.2
+	chacha20@0.10.1
+	chrono@0.4.45
+	cmov@0.5.4
+	compact_str@0.9.1
+	const-oid@0.10.2
+	convert_case@0.10.0
+	core-foundation-sys@0.8.7
+	cpufeatures@0.2.17
+	cpufeatures@0.3.0
+	crc32fast@1.5.0
+	critical-section@1.2.0
+	crossbeam-channel@0.5.16
+	crossbeam-deque@0.8.7
+	crossbeam-epoch@0.9.20
+	crossbeam-utils@0.8.22
+	crossterm@0.29.0
+	crossterm_winapi@0.9.1
+	crypto-common@0.1.7
+	crypto-common@0.2.2
+	csscolorparser@0.6.2
+	cssparser-macros@0.7.0
+	cssparser@0.37.0
+	ctutils@0.4.2
+	darling@0.24.0
+	darling_core@0.24.0
+	darling_macro@0.24.0
+	data-encoding@2.11.1
+	deltae@0.3.2
+	deranged@0.5.8
+	derive_arbitrary@1.4.2
+	derive_more-impl@2.1.1
+	derive_more@2.1.1
+	digest@0.10.7
+	digest@0.11.3
+	dirs-sys@0.5.0
+	dirs@6.0.0
+	displaydoc@0.2.7
+	document-features@0.2.12
+	dtoa-short@0.3.5
+	dtoa@1.0.11
+	ego-tree@0.11.0
+	either@1.17.0
+	enum-as-inner@0.6.1
+	equivalent@1.0.2
+	errno@0.3.14
+	euclid@0.22.14
+	fancy-regex@0.11.0
+	fastrand@2.5.0
+	fdeflate@0.3.7
+	filedescriptor@0.8.3
+	filetime@0.2.29
+	find-msvc-tools@0.1.10
+	finl_unicode@1.4.0
+	fixedbitset@0.4.2
+	flate2@1.1.9
+	flexi_logger@0.31.10
+	fnv@1.0.7
+	foldhash@0.2.0
+	form_urlencoded@1.2.2
+	funty@2.0.0
+	futures-channel@0.3.33
+	futures-core@0.3.33
+	futures-executor@0.3.33
+	futures-io@0.3.33
+	futures-macro@0.3.33
+	futures-sink@0.3.33
+	futures-task@0.3.33
+	futures-util@0.3.33
+	futures@0.3.33
+	generic-array@0.14.7
+	getopts@0.2.24
+	getrandom@0.2.17
+	getrandom@0.3.4
+	getrandom@0.4.3
+	hashbrown@0.16.1
+	hashbrown@0.17.1
+	heck@0.5.0
+	hex@0.4.3
+	hickory-proto@0.25.2
+	hickory-resolver@0.25.2
+	hmac@0.13.0
+	html5ever@0.39.0
+	http-body-util@0.1.4
+	http-body@1.1.0
+	http@1.5.0
+	httparse@1.10.1
+	hybrid-array@0.4.14
+	hyper-rustls@0.27.9
+	hyper-util@0.1.20
+	hyper@1.11.0
+	iana-time-zone-haiku@0.1.2
+	iana-time-zone@0.1.65
+	icu_collections@2.2.0
+	icu_locale_core@2.2.0
+	icu_normalizer@2.2.0
+	icu_normalizer_data@2.2.0
+	icu_properties@2.2.0
+	icu_properties_data@2.2.0
+	icu_provider@2.2.0
+	icy_sixel@0.5.0
+	ident_case@1.0.1
+	idna@1.1.0
+	idna_adapter@1.2.2
+	image-webp@0.2.4
+	image@0.25.10
+	indexmap@2.14.0
+	indoc@2.0.7
+	instability@0.3.13
+	ipconfig@0.3.4
+	ipnet@2.12.1
+	is-docker@0.2.0
+	is-wsl@0.4.0
+	itertools@0.14.0
+	itoa@1.0.18
+	js-sys@0.3.104
+	kasuari@0.4.12
+	lab@0.11.0
+	lazy_static@1.5.0
+	libc@0.2.189
+	libm@0.2.16
+	libmimalloc-sys@0.1.49
+	libredox@0.1.19
+	line-clipping@0.3.8
+	linux-raw-sys@0.12.1
+	linux-raw-sys@0.4.15
+	litemap@0.8.2
+	litrs@1.0.0
+	lock_api@0.4.14
+	log@0.4.33
+	lru-slab@0.1.2
+	lru@0.18.2
+	mac_address@1.1.8
+	markup5ever@0.39.0
+	md-5@0.11.0
+	memchr@2.8.3
+	memmem@0.1.1
+	memoffset@0.9.1
+	mimalloc@0.1.52
+	minimal-lexical@0.2.1
+	miniz_oxide@0.8.9
+	mio@1.2.2
+	moka@0.12.16
+	moxcms@0.8.1
+	new_debug_unreachable@1.0.6
+	nix@0.29.0
+	nom@7.1.3
+	nu-ansi-term@0.50.3
+	num-conv@0.2.2
+	num-derive@0.4.2
+	num-traits@0.2.19
+	num_threads@0.1.7
+	once_cell@1.21.4
+	open@5.4.1
+	option-ext@0.2.0
+	ordered-float@4.6.0
+	ordered-float@5.3.0
+	outref@0.5.2
+	palette@0.7.7
+	palette_derive@0.7.7
+	palette_math@0.7.7
+	parking_lot@0.12.5
+	parking_lot_core@0.9.12
+	percent-encoding@2.3.2
+	pest@2.8.8
+	pest_derive@2.8.8
+	pest_generator@2.8.8
+	pest_meta@2.8.8
+	phf@0.11.3
+	phf@0.13.1
+	phf_codegen@0.11.3
+	phf_codegen@0.13.1
+	phf_generator@0.11.3
+	phf_generator@0.13.1
+	phf_macros@0.11.3
+	phf_macros@0.13.1
+	phf_shared@0.11.3
+	phf_shared@0.13.1
+	pin-project-lite@0.2.17
+	png@0.18.1
+	portable-atomic@1.14.0
+	potential_utf@0.1.5
+	powerfmt@0.2.0
+	ppv-lite86@0.2.21
+	precomputed-hash@0.1.1
+	proc-macro2@1.0.107
+	pxfm@0.1.30
+	quantette@0.5.1
+	quick-error@2.0.1
+	quinn-proto@0.11.16
+	quinn-udp@0.5.15
+	quinn@0.11.11
+	quote@1.0.47
+	r-efi@5.3.0
+	r-efi@6.0.0
+	radium@0.7.0
+	rand@0.10.2
+	rand@0.8.7
+	rand@0.9.5
+	rand_chacha@0.3.1
+	rand_chacha@0.9.0
+	rand_core@0.10.1
+	rand_core@0.6.4
+	rand_core@0.9.5
+	rand_pcg@0.10.2
+	rand_xoshiro@0.7.0
+	ratatui-core@0.1.2
+	ratatui-crossterm@0.1.2
+	ratatui-image@11.0.6
+	ratatui-macros@0.7.2
+	ratatui-termina@0.1.0
+	ratatui-termwiz@0.1.2
+	ratatui-widgets@0.3.2
+	ratatui@0.30.2
+	rayon-core@1.13.0
+	rayon@1.12.0
+	redox_syscall@0.5.18
+	redox_users@0.5.2
+	ref-cast-impl@1.0.26
+	ref-cast@1.0.26
+	regex-automata@0.4.18
+	regex-syntax@0.8.11
+	regex@1.13.1
+	reqwest@0.12.28
+	resolv-conf@0.7.6
+	ring@0.17.14
+	rmp-serde@1.3.1
+	rmp@0.8.15
+	rustc-hash@2.1.3
+	rustc_version@0.4.1
+	rustix@0.38.44
+	rustix@1.1.4
+	rustls-pki-types@1.15.1
+	rustls-webpki@0.103.13
+	rustls@0.23.43
+	rustversion@1.0.23
+	ryu@1.0.23
+	safe_arch@0.9.3
+	scopeguard@1.2.0
+	scraper@0.27.0
+	selectors@0.38.0
+	self_cell@1.3.0
+	semver@1.0.28
+	serde@1.0.229
+	serde_core@1.0.229
+	serde_derive@1.0.229
+	serde_json@1.0.151
+	serde_urlencoded@0.7.1
+	servo_arc@0.4.3
+	sha2@0.10.9
+	shlex@2.0.1
+	signal-hook-mio@0.2.5
+	signal-hook-registry@1.4.8
+	signal-hook@0.3.18
+	simd-adler32@0.3.10
+	siphasher@1.0.3
+	slab@0.4.12
+	smallvec@1.15.2
+	socket2@0.6.5
+	stable_deref_trait@1.2.1
+	static_assertions@1.1.0
+	string_cache@0.9.0
+	string_cache_codegen@0.6.1
+	strsim@0.11.1
+	strum@0.28.0
+	strum_macros@0.28.0
+	subtle@2.6.1
+	syn@1.0.109
+	syn@2.0.119
+	syn@3.0.3
+	sync_wrapper@1.0.2
+	synstructure@0.13.2
+	tagptr@0.2.0
+	tap@1.0.1
+	tar@0.4.46
+	tempfile@3.27.0
+	tendril@0.5.1
+	termina@0.3.3
+	terminfo@0.9.0
+	termios@0.3.3
+	termwiz@0.23.3
+	thiserror-impl@1.0.69
+	thiserror-impl@2.0.20
+	thiserror@1.0.69
+	thiserror@2.0.20
+	time-core@0.1.9
+	time@0.3.55
+	tinystr@0.8.3
+	tinyvec@1.12.0
+	tinyvec_macros@0.1.1
+	tokio-macros@2.7.2
+	tokio-rustls@0.26.4
+	tokio@1.53.1
+	tower-http@0.6.11
+	tower-layer@0.3.3
+	tower-service@0.3.3
+	tower@0.5.3
+	tracing-core@0.1.36
+	tracing@0.1.44
+	try-lock@0.2.5
+	typenum@1.20.1
+	ucd-trie@0.1.7
+	unicode-ident@1.0.24
+	unicode-segmentation@1.13.3
+	unicode-truncate@2.0.1
+	unicode-width@0.2.2
+	untrusted@0.9.0
+	url@2.5.8
+	utf8_iter@1.0.4
+	utf8parse@0.2.2
+	uuid@1.24.0
+	version_check@0.9.5
+	vsimd@0.8.0
+	vtparse@0.6.2
+	want@0.3.1
+	wasi@0.11.1+wasi-snapshot-preview1
+	wasip2@1.0.4+wasi-0.2.12
+	wasm-bindgen-futures@0.4.77
+	wasm-bindgen-macro-support@0.2.127
+	wasm-bindgen-macro@0.2.127
+	wasm-bindgen-shared@0.2.127
+	wasm-bindgen@0.2.127
+	web-sys@0.3.104
+	web-time@1.1.0
+	web_atoms@0.2.5
+	webpki-roots@1.0.9
+	wezterm-bidi@0.2.3
+	wezterm-blob-leases@0.1.1
+	wezterm-color-types@0.3.0
+	wezterm-dynamic-derive@0.1.1
+	wezterm-dynamic@0.2.1
+	wezterm-input-types@0.1.0
+	wide@0.8.3
+	widestring@1.2.1
+	winapi-i686-pc-windows-gnu@0.4.0
+	winapi-x86_64-pc-windows-gnu@0.4.0
+	winapi@0.3.9
+	windows-core@0.58.0
+	windows-core@0.62.2
+	windows-implement@0.58.0
+	windows-implement@0.60.2
+	windows-interface@0.58.0
+	windows-interface@0.59.3
+	windows-link@0.2.1
+	windows-registry@0.6.1
+	windows-result@0.2.0
+	windows-result@0.4.1
+	windows-strings@0.1.0
+	windows-strings@0.5.1
+	windows-sys@0.52.0
+	windows-sys@0.59.0
+	windows-sys@0.61.2
+	windows-targets@0.52.6
+	windows@0.58.0
+	windows_aarch64_gnullvm@0.52.6
+	windows_aarch64_msvc@0.52.6
+	windows_i686_gnu@0.52.6
+	windows_i686_gnullvm@0.52.6
+	windows_i686_msvc@0.52.6
+	windows_x86_64_gnu@0.52.6
+	windows_x86_64_gnullvm@0.52.6
+	windows_x86_64_msvc@0.52.6
+	wit-bindgen@0.57.1
+	writeable@0.6.3
+	wyz@0.5.1
+	xattr@1.6.1
+	yoke-derive@0.8.2
+	yoke@0.8.3
+	zerocopy-derive@0.8.56
+	zerocopy@0.8.56
+	zerofrom-derive@0.1.7
+	zerofrom@0.1.8
+	zeroize@1.9.0
+	zerotrie@0.2.4
+	zerovec-derive@0.11.3
+	zerovec@0.11.6
+	zip@2.4.2
+	zmij@1.0.23
+	zopfli@0.8.3
+	zune-core@0.5.3
+	zune-jpeg@0.5.15
+"
+
+RUST_MIN_VER="1.90.0"
+
+inherit cargo
+
+DESCRIPTION="Terminal interface to find, download, and stream movies, TV shows, and live TV"
+HOMEPAGE="https://github.com/mesamirh/MovieBox-Tui"
+
+SRC_URI="
+	https://github.com/mesamirh/MovieBox-Tui/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz
+	${CARGO_CRATE_URIS}
+"
+
+S="${WORKDIR}/MovieBox-Tui-${PV}"
+
+LICENSE="|| ( Apache-2.0 MIT )"
+# Dependent crate licenses
+LICENSE+="
+	Apache-2.0 BSD CDLA-Permissive-2.0 ISC MIT MPL-2.0 Unicode-3.0
+	Unicode-DFS-2016 WTFPL-2 ZLIB
+"
+
+SLOT="0"
+KEYWORDS="~amd64 ~arm64 ~riscv"
+
+IUSE="docs +mpv vlc"
+REQUIRED_USE="|| ( mpv vlc )"
+
+RDEPEND="
+	mpv? ( media-video/mpv )
+	vlc? ( media-video/vlc )
+"
+
+DOCS=(
+	README.md
+	LICENSE
+	LICENSE-MIT
+	LICENSE-APACHE
+	docs/
+)
+
+src_prepare() {
+	# Upstream enables release stripping; Portage handles stripping.
+	sed -i -r 's/^[[:space:]]*strip[[:space:]]*=[[:space:]]*true/strip = false/' \
+		Cargo.toml || die
+
+	eapply_user
+}
+
+src_install() {
+	cargo_src_install
+	#dobin "$(cargo_target_dir)/moviebox-tui"
+
+	if use docs; then
+		einstalldocs
+	fi
+}
