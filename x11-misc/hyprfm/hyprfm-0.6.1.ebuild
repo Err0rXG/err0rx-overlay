@@ -55,7 +55,7 @@ RDEPEND="
 	sys-apps/fd
 	x11-misc/xdg-utils
 	kwindowsystem? ( kde-frameworks/kwindowsystem:6 )
-	bat? ( app-text/bat )
+	bat? ( sys-apps/bat )
 	clipboard? ( gui-apps/wl-clipboard )
 	exif? ( media-libs/exiftool )
 	ffmpeg? ( media-video/ffmpeg )
