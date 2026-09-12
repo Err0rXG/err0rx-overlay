@@ -1,0 +1,10 @@
+--- a/IGC/AdaptorOCL/dllInterfaceCompute.cpp
++++ b/IGC/AdaptorOCL/dllInterfaceCompute.cpp
+@@ -455,4 +455,4 @@
+     GenerateSPIRVExtensionsMD(Context, *LLVMModule, SPIRVBinary.str());
+
+-    if (IGC_IS_FLAG_ENABLED(ShaderDumpTranslationOnly))
+-      LLVMModule->dump();
++    // if (IGC_IS_FLAG_ENABLED(ShaderDumpTranslationOnly))
++    //   LLVMModule->dump();
+   }
