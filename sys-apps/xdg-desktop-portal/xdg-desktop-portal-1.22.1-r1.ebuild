@@ -109,6 +109,11 @@ src_configure() {
 	addpredict /proc/self/task
 	# gst-plugin-scanner probes GPU render nodes when scanning VAAPI/NVDEC plugins
 	addpredict /dev/dri
+	# Prevent GStreamer plugin scanner from triggering sandbox violations on V4L2 devices
+	local dev
+	for dev in /dev/video*; do
+		[[ -e ${dev} ]] && addpredict "${dev}"
+	done
 
 	local emesonargs=(
 		-Ddbus-service-dir="${EPREFIX}/usr/share/dbus-1/services"
