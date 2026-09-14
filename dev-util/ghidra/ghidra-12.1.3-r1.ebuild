@@ -7,7 +7,7 @@ inherit java-pkg-2 desktop python-single-r1
 
 GRADLE_DEP_VER="20260923"
 # Ghidra/application.properties
-GRADLE_VER="8.5"
+GRADLE_VER="9.7.0"
 
 RELEASE_VERSION="11.4"   #${PV}
 
@@ -105,37 +105,37 @@ QA_FLAGS_IGNORED="
 # build fails with system-vm jdk-25, see:
 # https://github.com/gradle/gradle/issues/35111
 # java-pkg-2 does not set it for some reason
-JAVA_PKG_WANT_SOURCE="21"
-JAVA_PKG_WANT_TARGET="21"
+JAVA_PKG_WANT_SOURCE="25"
+JAVA_PKG_WANT_TARGET="25"
 
 REQUIRED_USE=${PYTHON_REQUIRED_USE}
 #java-pkg-2 sets java based on RDEPEND so the java slot in rdepend is used to build
 #>=virtual/jdk-21:*
-RDEPEND="virtual/jre:21
+RDEPEND="virtual/jre:25
 		${PYTHON_DEPS}"
 DEPEND="${RDEPEND}
-	virtual/jdk:21
+	virtual/jdk:25
 	sys-devel/bison
 	dev-java/jflex
 	app-arch/unzip"
-BDEPEND=">=dev-java/gradle-bin-${GRADLE_VER}:* <dev-java/gradle-bin-9.0.0
+BDEPEND=">=dev-java/gradle-bin-${GRADLE_VER}:* >dev-java/gradle-bin-9.0.0
 		dev-python/pip"
 
-check_gradle_binary() {
-	gradle_link_target=$(readlink -n /usr/bin/gradle)
-	currentver="${gradle_link_target/gradle-bin-/}"
-	requiredver="${GRADLE_VER}"
-	einfo "Gradle version ${currentver} currently set."
-	if [ "$(echo ${currentver} | cut -d. -f1)" -ge "9" ]; then
-		eerror "Selected gradle version ${currentver} is too high. It must be eselected before building ${PN}."
-		die "Please run 'eselect gradle set gradle-bin-XX' when XX is a version of gradle lower than 9."
-	elif [ "$(printf '%s\n' "$requiredver" "$currentver" | sort -V | head -n1)" = "$requiredver" ]; then
-		einfo "Gradle version ${currentver} is >= ${requiredver}, proceeding with build..."
-	else
-		eerror "Gradle version ${requiredver} or higher must be eselected before building ${PN}."
-		die "Please run 'eselect gradle set gradle-bin-XX' when XX is a version of gradle higher than ${requiredver}"
-	fi
-}
+#check_gradle_binary() {
+#	gradle_link_target=$(readlink -n /usr/bin/gradle)
+#	currentver="${gradle_link_target/gradle-bin-/}"
+#	requiredver="${GRADLE_VER}"
+#	einfo "Gradle version ${currentver} currently set."
+#	if [ "$(echo ${currentver} | cut -d. -f1)" -ge "9" ]; then
+#		eerror "Selected gradle version ${currentver} is too high. It must be eselected before building ${PN}."
+#		die "Please run 'eselect gradle set gradle-bin-XX' when XX is a version of gradle lower than 9."
+#	elif [ "$(printf '%s\n' "$requiredver" "$currentver" | sort -V | head -n1)" = "$requiredver" ]; then
+#		einfo "Gradle version ${currentver} is >= ${requiredver}, proceeding with build..."
+#	else
+#		eerror "Gradle version ${requiredver} or higher must be eselected before building ${PN}."
+#		die "Please run 'eselect gradle set gradle-bin-XX' when XX is a version of gradle higher than ${requiredver}"
+#	fi
+#}
 
 pkg_setup() {
 	java-pkg-2_pkg_setup
