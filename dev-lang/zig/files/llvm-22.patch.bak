@@ -1,0 +1,83 @@
+--- a/cmake/Findllvm.cmake
++++ b/cmake/Findllvm.cmake
+@@ -40,7 +40,7 @@
+       OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+     get_filename_component(LLVM_CONFIG_DIR "${LLVM_CONFIG_EXE}" DIRECTORY)
+-    if("${LLVM_CONFIG_VERSION}" VERSION_LESS 21 OR "${LLVM_CONFIG_VERSION}" VERSION_EQUAL 22 OR "${LLVM_CONFIG_VERSION}" VERSION_GREATER 22)
++    if("${LLVM_CONFIG_VERSION}" VERSION_LESS 22 OR "${LLVM_CONFIG_VERSION}" VERSION_GREATER_EQUAL 23)
+       # Save the error message, in case this is the last llvm-config we find
+-      list(APPEND LLVM_CONFIG_ERROR_MESSAGES "expected LLVM 21.x but found ${LLVM_CONFIG_VERSION} using ${LLVM_CONFIG_EXE}")
++      list(APPEND LLVM_CONFIG_ERROR_MESSAGES "expected LLVM 22.x but found ${LLVM_CONFIG_VERSION} using ${LLVM_CONFIG_EXE}")
+
+       # Ignore this directory and try the search again
+       list(APPEND CMAKE_IGNORE_PATH "${LLVM_CONFIG_DIR}")
+@@ -63,9 +63,9 @@
+         # Save the error message, in case this is the last llvm-config we find
+         if (ZIG_SHARED_LLVM)
+-          list(APPEND LLVM_CONFIG_ERROR_MESSAGES "LLVM 21.x found at ${LLVM_CONFIG_EXE} does not support linking as a shared library")
++          list(APPEND LLVM_CONFIG_ERROR_MESSAGES "LLVM 22.x found at ${LLVM_CONFIG_EXE} does not support linking as a shared library")
+         else()
+-          list(APPEND LLVM_CONFIG_ERROR_MESSAGES "LLVM 21.x found at ${LLVM_CONFIG_EXE} does not support linking as a static library")
++          list(APPEND LLVM_CONFIG_ERROR_MESSAGES "LLVM 22.x found at ${LLVM_CONFIG_EXE} does not support linking as a static library")
+         endif()
+
+         # Ignore this directory and try the search again
+--- a/src/zig_clang_driver.cpp
++++ b/src/zig_clang_driver.cpp
+@@ -21,1 +21,1 @@
+-#include "clang/Driver/Options.h"
++#include "clang/Options/Options.h"
+--- a/src/zig_clang_cc1_main.cpp
++++ b/src/zig_clang_cc1_main.cpp
+@@ -20,1 +20,1 @@
+-#include "clang/Driver/Options.h"
++#include "clang/Options/Options.h"
+@@ -139,4 +139,5 @@
+ #include "clang/CodeGen/ObjectFilePCHContainerWriter.h"
+ #include "clang/Config/config.h"
++#include "clang/Driver/Driver.h"
+ #include "clang/Driver/DriverDiagnostic.h"
+ #include "clang/Options/Options.h"
+--- a/src/zig_clang_cc1as_main.cpp
++++ b/src/zig_clang_cc1as_main.cpp
+@@ -17,1 +17,1 @@
+-#include "clang/Driver/Options.h"
++#include "clang/Options/Options.h"
+@@ -323,5 +323,4 @@
+ using namespace clang;
+-using namespace clang::driver;
+-using namespace clang::driver::options;
++using namespace clang::options;
+ using namespace llvm;
+ using namespace llvm::opt;
+@@ -683,1 +683,1 @@
+-        llvm::opt::Visibility(driver::options::CC1AsOption));
++        llvm::opt::Visibility(options::CC1AsOption));
+--- a/src/zig_llvm-ar.cpp
++++ b/src/zig_llvm-ar.cpp
+@@ -13,4 +13,5 @@
+ //===----------------------------------------------------------------------===//
+
+ #include "llvm/ADT/StringExtras.h"
++#include "llvm/ADT/StringMap.h"
+ #include "llvm/ADT/StringSwitch.h"
+--- a/src/zig_llvm.cpp
++++ b/src/zig_llvm.cpp
+@@ -17,1 +17,2 @@
+ #include "zig_llvm.h"
++#include <limits>
+@@ -443,6 +443,12 @@
+
+ void ZigLLVMSetOptBisectLimit(LLVMContextRef context_ref, int limit) {
+     static OptBisect opt_bisect;
+-    opt_bisect.setLimit(limit);
++    if (limit == -1) {
++        opt_bisect.setIntervals({{1, std::numeric_limits<int>::max()}});
++    } else if (limit == 0) {
++        opt_bisect.setIntervals({{0, 0}});
++    } else {
++        opt_bisect.setIntervals({{1, limit}});
++    }
+     unwrap(context_ref)->setOptPassGate(opt_bisect);
+ }
