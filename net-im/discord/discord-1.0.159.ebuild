@@ -19,6 +19,8 @@ inherit chromium-2 desktop linux-info optfeature python-single-r1 unpacker xdg
 DESCRIPTION="All-in-one voice and text chat for gamers"
 HOMEPAGE="https://discord.com/"
 
+## VERSION_CHECK="curl -sIL "https://discord.com/api/download?platform=linux&format=tar.gz" | grep -i "location:""
+
 SRC_URI="
 	https://stable.dl2.discordapp.net/distro/app/stable/linux/x64/${MY_PV}/full.distro -> ${P}.distro
 	https://stable.dl2.discordapp.net/distro/app/stable/linux/x64/${MY_PV}/discord_desktop_core/1/full.distro
