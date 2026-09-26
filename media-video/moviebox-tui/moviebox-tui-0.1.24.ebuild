@@ -1,0 +1,63 @@
+# Copyright 2026 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+CRATES=""
+
+RUST_MIN_VER="1.90.0"
+
+inherit cargo
+
+DESCRIPTION="Terminal interface to find, download, and stream movies, TV shows, and live TV using local media players."
+HOMEPAGE="https://github.com/mesamirh/MovieBox-Tui"
+SRC_URI="
+	https://github.com/mesamirh/MovieBox-Tui/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz
+	https://raw.githubusercontent.com/Err0rXG/err0rx-overlay/main/Req_Ex_Tars/Moviebox-Tui/${P}-crates.tar.xz
+	${CARGO_CRATE_URIS}
+"
+
+S="${WORKDIR}/MovieBox-Tui-${PV}"
+
+LICENSE="|| ( Apache-2.0 MIT )"
+# Dependent crate licenses
+LICENSE+="
+	Apache-2.0 BSD CDLA-Permissive-2.0 ISC MIT MPL-2.0 Unicode-3.0
+	Unicode-DFS-2016 WTFPL-2 ZLIB
+"
+SLOT="0"
+KEYWORDS="~amd64"
+
+
+IUSE="docs +mpv vlc"
+REQUIRED_USE="|| ( mpv vlc )"
+
+RDEPEND="
+	mpv? ( media-video/mpv )
+	vlc? ( media-video/vlc )
+"
+
+DOCS=(
+	README.md
+	LICENSE
+	LICENSE-MIT
+	LICENSE-APACHE
+	docs/
+)
+
+src_prepare() {
+	# Upstream enables release stripping; Portage handles stripping.
+	sed -i -r 's/^[[:space:]]*strip[[:space:]]*=[[:space:]]*true/strip = false/' \
+		Cargo.toml || die
+
+	eapply_user
+}
+
+src_install() {
+	cargo_src_install
+	#dobin "$(cargo_target_dir)/moviebox-tui"
+
+	if use docs; then
+		einstalldocs
+	fi
+}
