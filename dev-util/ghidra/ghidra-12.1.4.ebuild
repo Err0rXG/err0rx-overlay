@@ -7,7 +7,7 @@ inherit java-pkg-2 desktop python-single-r1
 
 GRADLE_DEP_VER="20260923"
 # Ghidra/application.properties
-GRADLE_VER="9.7.0"
+GRADLE_VER="9.8.0"
 
 RELEASE_VERSION="11.4"   #${PV}
 
