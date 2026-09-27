@@ -121,6 +121,10 @@ DEPEND="${RDEPEND}
 BDEPEND=">=dev-java/gradle-bin-${GRADLE_VER}:* >dev-java/gradle-bin-9.0.0
 		dev-python/pip"
 
+PATCHES=(
+	"${FILESDIR}"/ghidra-12.1.4-jdk27-appcontext.patch
+)
+
 #check_gradle_binary() {
 #	gradle_link_target=$(readlink -n /usr/bin/gradle)
 #	currentver="${gradle_link_target/gradle-bin-/}"
