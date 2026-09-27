@@ -20,24 +20,3 @@
  
  		for (Frame frame : Frame.getFrames()) {
  			set.addAll(getAllWindows(frame));
---- a/Ghidra/Framework/Docking/src/main/java/docking/test/AbstractDockingTest.java
-+++ b/Ghidra/Framework/Docking/src/main/java/docking/test/AbstractDockingTest.java
-@@ -61,7 +61,6 @@
- import ghidra.util.worker.Worker;
- import junit.framework.AssertionFailedError;
- import resources.icons.UrlImageIcon;
--import sun.awt.AppContext;
- import util.CollectionUtils;
- import utility.application.ApplicationLayout;
- 
-@@ -1517,10 +1516,6 @@
- 
- 		runSwing(() -> {
- 
--			// Update Swing's notion of the focused component
--			Object contextKey = getInstanceField("FOCUSED_COMPONENT", tc);
--			AppContext context = AppContext.getAppContext();
--			context.put(contextKey, tc);
- 
- 			/*
- 			 	The FlatLaf will select all text in a text field when it gains focus.  This will 
