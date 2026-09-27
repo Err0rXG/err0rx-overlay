@@ -157,9 +157,9 @@ src_unpack() {
 }
 
 src_prepare() {
-        mkdir -p ".gradle/init.d" || die "(10) mkdir failed"
-        cp "${FILESDIR}"/repos.gradle .gradle/init.d || die "(11) cp failed"
-        sed -i "s|S_DIR|${S}|g" .gradle/init.d/repos.gradle || die "(12) sed failed"
+        mkdir -p "dependencies/gradle/init.d" || die "(10) mkdir failed"
+        cp "${FILESDIR}"/repos.gradle dependencies/gradle/init.d || die "(11) cp failed"
+        sed -i "s|S_DIR|${S}|g" dependencies/gradle/init.d/repos.gradle || die "(12) sed failed"
 
         # Remove build date so we can unpack dist.zip later
         sed -i "s|_\${rootProject.BUILD_DATE_SHORT}||g" \
