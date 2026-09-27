@@ -249,7 +249,7 @@ src_compile() {
 	export _JAVA_OPTIONS="$_JAVA_OPTIONS -Duser.home=$HOME -Djava.io.tmpdir=${T}"
 
 	GRADLE="gradle --gradle-user-home .gradle --console rich --no-daemon"
-	GRADLE="${GRADLE} --parallel --max-workers $(nproc)"
+	GRADLE="${GRADLE} --offline --parallel --max-workers $(nproc)"
 	unset TERM
 	${GRADLE} prepDev -x check -x test || die
 	${GRADLE} assembleAll -x check -x test --parallel || die
