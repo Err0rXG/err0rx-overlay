@@ -84,6 +84,7 @@ BDEPEND=">=dev-java/gradle-bin-${GRADLE_VER}:* >=dev-java/gradle-bin-9.8.0
 
 PATCHES=(
 	"${FILESDIR}"/ghidra-12.1.4-jdk27-appcontext.patch
+	"${FILESDIR}"/ghidra-12.1.4-java2d-opengl.patch
 )
 
 check_gradle_binary() {
