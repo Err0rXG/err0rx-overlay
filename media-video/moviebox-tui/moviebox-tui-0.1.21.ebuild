@@ -13,7 +13,7 @@ DESCRIPTION="Terminal interface to find, download, and stream movies, TV shows, 
 HOMEPAGE="https://github.com/mesamirh/MovieBox-Tui"
 SRC_URI="
 	https://github.com/mesamirh/MovieBox-Tui/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz
-	https://raw.githubusercontent.com/Err0rXG/err0rx-overlay/main/Req_Ex_Tars/Moviebox-Tui/${P}-crates.tar.xz
+	https://github.com/Err0rXG/err0rx-overlay-distfiles/releases/download/${P}/${P}-crates.tar.xz
 	${CARGO_CRATE_URIS}
 "
 
