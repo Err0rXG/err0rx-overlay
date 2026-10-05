@@ -14,9 +14,7 @@ CHROMIUM_LANGS="
 PYTHON_COMPAT=( python3_{11..15} )
 UPDATE_DISABLER_COMMIT="2f26748a667045d26bc19841f1a731b4be7a7514"
 
-ELECTRON_SLOT="44"
-
-inherit chromium-2 desktop electron linux-info optfeature python-single-r1 unpacker xdg
+inherit chromium-2 desktop linux-info optfeature python-single-r1 unpacker xdg
 
 DESCRIPTION="All-in-one voice and text chat for gamers"
 HOMEPAGE="https://discord.com/"
@@ -48,16 +46,15 @@ S="${WORKDIR}/${MY_PN^}"
 
 LICENSE="all-rights-reserved"
 SLOT="0"
-KEYWORDS="~amd64"
+KEYWORDS="amd64"
 
-IUSE="appindicator bundled-electron +seccomp wayland"
+IUSE="appindicator +seccomp wayland"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 RESTRICT="bindist mirror strip test"
 BDEPEND="app-arch/brotli
 	app-arch/zip"
 RDEPEND="
 	${PYTHON_DEPS}
-	!bundled-electron? ( ${ELECTRON_DEPEND} )
 	>=app-accessibility/at-spi2-core-2.46.0:2
 	dev-libs/expat
 	dev-libs/glib:2
@@ -98,13 +95,6 @@ CONFIG_CHECK="~USER_NS"
 repackage_node_modules() {
 	brotli -d "${DISTDIR}/${P}"-$1.distro -o "${T}"/$1.tar 2>/dev/null || die
 	unpack "${T}"/$1.tar || die
-	if [[ $1 == discord_krisp ]]; then
-		# The Krisp module refuses to initialize unless the host executable
-		# matches a hardcoded hash of the official Discord binary, which the
-		# system Electron never will. Force the check to pass.
-		"${EPYTHON}" "${FILESDIR}/patch-krisp.py" "${WORKDIR}/files/discord_krisp.node" ||
-			die "failed to patch the Krisp signature check"
-	fi
 	pushd "${WORKDIR}"/files 2>/dev/null || die
 	zip -rq "${WORKDIR}"/$1.zip . || die
 	popd 2>/dev/null || die
@@ -148,25 +138,18 @@ src_unpack() {
 
 src_configure() {
 	default
-
-	use bundled-electron && chromium_suid_sandbox_check_kernel_config
+	chromium_suid_sandbox_check_kernel_config
 }
 
 src_prepare() {
 	default
-
-	if use bundled-electron; then
-		pushd "locales/" >/dev/null || die "location change for language cleanup failed"
-		chromium_remove_language_paks
-		popd >/dev/null || die "location reset for language cleanup failed"
-	fi
+	# cleanup languages
+	pushd "locales/" >/dev/null || die "location change for language cleanup failed"
+	chromium_remove_language_paks
+	popd >/dev/null || die "location reset for language cleanup failed"
 
 	# Update exec location in launcher
-	local exec="${DESTDIR}/${MY_PN^}"
-	use bundled-electron ||
-		exec="$(electron_home)/electron ${DESTDIR}/resources/app"
 	sed --expression "s:@@DESTDIR@@:${DESTDIR}:" \
-		--expression "s:@@EXEC@@:${exec}:" \
 		"${FILESDIR}/launcher-r1.sh" > "${T}/launcher.sh" || die "updating of exec location in launcher failed"
 
 	# USE seccomp in launcher
@@ -181,23 +164,6 @@ src_prepare() {
 			"${T}/launcher.sh" || die "sed failed for wayland"
 	fi
 	cp "${FILESDIR}/manifest.json" resources/bootstrap/manifest.json || die "Failed copying manifest.json"
-
-	if ! use bundled-electron; then
-		# The updater added in 1.0.136 relaunches Discord through its own
-		# binary, which is not installed without the bundled Electron
-		"${EPYTHON}" - <<-EOF || die "Failed disabling the new updater"
-		import json
-		with open("resources/build_info.json") as f:
-		    info = json.load(f)
-		info["newUpdater"] = False
-		with open("resources/build_info.json", "w") as f:
-		    json.dump(info, f, indent=2)
-		EOF
-
-		# Preload scripts do not see the override the loader installs
-		"${EPYTHON}" "${FILESDIR}/asar-resources-path.py" resources/app.asar ||
-			die "Failed pointing app.asar at its resources"
-	fi
 }
 
 src_install() {
@@ -209,43 +175,25 @@ src_install() {
 	"StartupWMClass=discord" \
 	"Path=${EPREFIX}/usr/bin"
 
-	if use bundled-electron; then
-		exeinto "${DESTDIR}"
+	exeinto "${DESTDIR}"
 
-		doexe "${MY_PN^}" chrome-sandbox libEGL.so libffmpeg.so libGLESv2.so libvk_swiftshader.so
-
-		insinto "${DESTDIR}"
-		doins chrome_100_percent.pak chrome_200_percent.pak icudtl.dat resources.pak snapshot_blob.bin v8_context_snapshot.bin
-		insopts -m0755
-		doins -r locales
-
-		# Chrome-sandbox requires the setuid bit to be specifically set.
-		# see https://github.com/electron/electron/issues/17972
-		fowners root "${DESTDIR}/chrome-sandbox"
-		fperms 4711 "${DESTDIR}/chrome-sandbox"
-
-		# Crashpad is included in the package once in a while and when it does, it must be installed.
-		# See #903616 and #890595
-		[[ -x chrome_crashpad_handler ]] && doins chrome_crashpad_handler
-	else
-		insopts -m0755
-	fi
+	doexe "${MY_PN^}" chrome-sandbox libEGL.so libffmpeg.so libGLESv2.so libvk_swiftshader.so
 
 	insinto "${DESTDIR}"
-	doins -r resources
+	doins chrome_100_percent.pak chrome_200_percent.pak icudtl.dat resources.pak snapshot_blob.bin v8_context_snapshot.bin
+	insopts -m0755
+	doins -r locales resources
 
-	if ! use bundled-electron; then
-		# Discord's own app.asar, loaded by the system Electron
-		insinto "${DESTDIR}/resources/app"
-		newins - package.json <<-EOF
-		{ "name": "discord", "main": "index.js" }
-		EOF
-		newins "${FILESDIR}/loader.js" index.js
-	fi
+	# Chrome-sandbox requires the setuid bit to be specifically set.
+	# see https://github.com/electron/electron/issues/17972
+	fowners root "${DESTDIR}/chrome-sandbox"
+	fperms 4711 "${DESTDIR}/chrome-sandbox"
+
+	# Crashpad is included in the package once in a while and when it does, it must be installed.
+	# See #903616 and #890595
+	[[ -x chrome_crashpad_handler ]] && doins chrome_crashpad_handler
 
 	# https://bugs.gentoo.org/905289
-	insinto "${DESTDIR}"
-	insopts -m0755
 	newins "${DISTDIR}/discord-disable-breaking-updates-${UPDATE_DISABLER_COMMIT}.py" disable-breaking-updates.py
 	python_fix_shebang "${ED}/${DESTDIR}/disable-breaking-updates.py"
 
@@ -253,22 +201,14 @@ src_install() {
 	newexe "${T}/launcher.sh" "discord" || die "failing to install launcher"
 
 	# https://bugs.gentoo.org/898912
-	if use appindicator && use bundled-electron; then
+	if use appindicator; then
 		dosym ../../usr/lib64/libayatana-appindicator3.so /opt/discord/libappindicator3.so
 	fi
+
 }
 
 pkg_postinst() {
 	xdg_pkg_postinst
-
-	# Modules are only (re)extracted from the bootstrap zips on the first
-	# launch, so patch the already-installed Krisp module for upgrades from
-	# unpatched builds.
-	local krisp_node="${XDG_CONFIG_HOME:-${HOME}/.config}/discord/${PV}/modules/discord_krisp/discord_krisp.node"
-	if [[ -f ${krisp_node} ]]; then
-		"${EPYTHON}" "${FILESDIR}/patch-krisp.py" "${krisp_node}" >/dev/null ||
-			ewarn "The installed discord_krisp module could not be patched; Krisp noise cancellation will not work until the module is reinstalled (remove ~/.config/discord/${PV}/modules and relaunch Discord)."
-	fi
 
 	optfeature_header "Install the following packages for additional support:"
 	optfeature "sound support" \
