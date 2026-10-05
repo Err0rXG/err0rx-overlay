@@ -78,9 +78,9 @@ QA_FLAGS_IGNORED="usr/.*/zig/${PV}/bin/zig"
 # https://codeberg.org/ziglang/zig/src/tag/0.16.0/build.zig#L775-L778
 CHECKREQS_MEMORY="8G"
 
-PATCHES=(
-    "${FILESDIR}/llvm-22.patch"
-)
+#PATCHES=(
+#    "${FILESDIR}/llvm-22.patch"
+#)
 
 pkg_setup() {
 	# Skip detecting zig executable.
