@@ -293,6 +293,8 @@ DEPEND="${COMMON_DEPEND}
 		|| (
 		   virtual/jdk:17
 		   virtual/jdk:21
+		   virtual/jdk:25
+		   virtual/jdk:27
 		)
 	)
 	test? (
