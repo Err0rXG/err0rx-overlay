@@ -12,7 +12,7 @@ inherit desktop udev xdg
 # such a release.  A bump that changes this shape must re-check the file name
 # before trusting the Manifest.
 ZIP_NAME="DaVinci_Resolve_${PV%.1}_Linux"
-RUN_NAME="${ZIP_NAME}.run"
+RUN_NAME="DaVinci_Resolve_${PV}_Linux.run"
 
 DESCRIPTION="Professional video editing, color, effects and audio post-processing"
 HOMEPAGE="https://www.blackmagicdesign.com/support/family/davinci-resolve-and-fusion"
