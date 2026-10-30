@@ -3,7 +3,7 @@
 
 EAPI=8
 
-VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/torproject.org.asc"
+VERIFY_SIG_OPENPGP_KEY_PATH="${FILESDIR}/torbrowser-signing.asc"
 
 inherit desktop verify-sig xdg
 
@@ -26,11 +26,11 @@ IUSE="verify-sig"
 
 RESTRICT="strip"
 
-BDEPEND="
-	verify-sig? (
-		>=sec-keys/openpgp-keys-tor-20250713
-	)
-"
+#BDEPEND="
+#	verify-sig? (
+#		>=sec-keys/openpgp-keys-tor-20250713
+#	)
+#"
 
 RDEPEND="
 	|| (
