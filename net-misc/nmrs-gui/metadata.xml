@@ -2,14 +2,13 @@
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
 	<maintainer type="person">
-		<email>you@example.com</email>
-		<name>Arghadip</name>
+		<email>nope.yea@eehahaha.ulala</email>
+		<name>Err0rXG</name>
 	</maintainer>
 	<use>
 		<flag name="thinlto">Use ThinLTO (faster, lower-memory build) instead of fat LTO</flag>
 	</use>
 	<upstream>
-		<remote-id type="github">freedesktop-rs/nmrs-gui</remote-id>
 		<remote-id type="github">freedesktop-rs/nmrs-gui</remote-id>
 	</upstream>
 </pkgmetadata>
