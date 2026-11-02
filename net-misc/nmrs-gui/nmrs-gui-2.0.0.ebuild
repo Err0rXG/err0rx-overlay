@@ -3,9 +3,11 @@
 
 EAPI=8
 
-RUST_MIN_VER="1.90.0"
+RUST_MIN_VER="1.92.0"
 
 inherit cargo desktop
+
+GIT_COMMIT="2eb1a3b"
 
 DESCRIPTION="NetworkManager GUI client built on nmrs and gpui"
 HOMEPAGE="https://github.com/freedesktop-rs/nmrs-gui"
@@ -42,6 +44,10 @@ src_prepare() {
 
 	# Upstream sets strip = true in [profile.release]; let Portage handle stripping
 	sed -i -e 's/^strip = true/strip = false/' Cargo.toml || die
+
+	# Tarballs have no .git, so upstream's build.rs can't read the commit hash
+	printf 'fn main() {\n\tprintln!("cargo:rustc-env=GIT_HASH=%s");\n}\n' \
+		"${GIT_COMMIT}" > build.rs || die
 
 	if ! use lto; then
 		# no LTO, parallel codegen
