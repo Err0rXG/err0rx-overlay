@@ -29,14 +29,16 @@ RESTRICT="!test? ( test )"
 RDEPEND="
 	dev-cpp/tbb:=
 	dev-libs/openssl:=
-	dev-qt/qtbase:6[concurrent,gui,widgets,xml]
+	dev-qt/qtbase:6[concurrent,gui,network,widgets,xml]
 	dev-qt/qtspeech:6
 	dev-qt/qtsvg:6
 	>=media-libs/blend2d-0.20:=
 	media-libs/freetype
 	media-libs/lcms:2
 	media-libs/libjpeg-turbo:=
+	media-libs/libpng:=
 	media-libs/openjpeg:=
+	sci-mathematics/clipper2:=
 	virtual/zlib:=
 	ocr? (
 		app-text/tesseract:=
@@ -45,6 +47,9 @@ RDEPEND="
 "
 DEPEND="${RDEPEND}
 	test? ( dev-qt/qtbase:6[test] )
+"
+BDEPEND="
+	dev-qt/qttools:6[linguist]
 "
 
 DOCS=( NOTES.txt README.md RELEASES.txt )
